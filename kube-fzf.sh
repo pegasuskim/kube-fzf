@@ -56,19 +56,29 @@ describepod [-a | -n <namespace-query>] [pod-query]
                          If there is only one match then it is selected automatically.
 EOF
       ;;
+    editvs)
+      cat << EOF
+editvs [-a | -n <namespace-query>] [pod-query]
+
+-a                    -  Search in all namespaces
+-h                    -  Show help
+-n <namespace-query>  -  Find namespaces matching <namespace-query> and do fzf.
+                         If there is only one match then it is selected automatically.
+EOF
+      ;;
   esac
 }
 
 _kube_fzf_handler() {
   local opt namespace_query pod_query cmd
   local open=false
-  local copy=false
+  local context=$(kubectl config current-context)
   local OPTIND=1
   local func=$1
 
   shift $((OPTIND))
 
-  while getopts ":hn:aoc" opt; do
+  while getopts "n:c:aoh" opt; do
     case $opt in
       h)
         _kube_fzf_usage "$func"
@@ -84,7 +94,7 @@ _kube_fzf_handler() {
         open=true
         ;;
       c)
-        copy=true
+        context="$OPTARG"
         ;;
       \?)
         echo "Invalid Option: -$OPTARG."
@@ -127,13 +137,13 @@ _kube_fzf_handler() {
     pod_query=$1
   fi
 
-  args="$namespace_query|$pod_query|$cmd|$open|$copy"
+  args="$namespace_query|$pod_query|$cmd|$open|$context"
 }
 
 _kube_fzf_fzf_args() {
   local search_query=$1
   local extra_args=$2
-  local fzf_args="--height=10 --ansi --reverse $extra_args"
+  local fzf_args="--height=100 --ansi --reverse $extra_args"
   [ -n "$search_query" ] && fzf_args="$fzf_args --query=$search_query"
   echo "$fzf_args"
 }
@@ -172,6 +182,44 @@ _kube_fzf_search_pod() {
   [ -z "$pod_name" ] && return 1
 
   echo "$namespace|$pod_name"
+}
+
+_kube_fzf_search() {
+  local namespace rs_name
+  local namespace_query=$1
+  local pod_query=$2
+  local context_selector=$3
+  local resource=$4
+  local pod_fzf_args=$(_kube_fzf_fzf_args "$pod_query")
+
+
+  if [ -z "$namespace_query" ]; then
+      namespace=$(kubectl config get-context --no-headers $context_selector \
+        | awk '{ print $5 }')
+
+      namespace=${namespace:=default}
+      rs_name=$(kubectl get $resource --namespace=$namespace --context $context_selector --no-headers \
+          | fzf $(echo $pod_fzf_args) \
+        | awk '{ print $1 }')
+  elif [ "$namespace_query" = "--all-namespaces" ]; then
+    read namespace pod_name <<< $(kubectl get $resource --all-namespaces --context $context_selector --no-headers \
+        | fzf $(echo $pod_fzf_args) \
+      | awk '{ print $1, $2 }')
+  else
+    local namespace_fzf_args=$(_kube_fzf_fzf_args "$namespace_query" "--select-1")
+    namespace=$(kubectl get namespaces --context $context_selector --no-headers  \
+        | fzf $(echo $namespace_fzf_args) \
+      | awk '{ print $1 }')
+
+    namespace=${namespace:=default}
+    rs_name=$(kubectl get $resource --namespace=$namespace --context $context_selector --no-headers \
+        | fzf $(echo $pod_fzf_args) \
+      | awk '{ print $1 }')
+  fi
+
+  [ -z "$rs_name" ] && return 1
+
+  echo "$namespace|$rs_name"
 }
 
 _kube_fzf_echo() {

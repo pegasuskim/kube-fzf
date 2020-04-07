@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+set -e
+set -o pipefail
+
+[[ -z "${KUBE_FZF_PATH}" ]] && source kube-fzf.sh || source $KUBE_FZF_PATH
+descnode() {
+  local namespace_query pod_query result namespace rs_name context
+  local rs="node"
+  _kube_fzf_handler "descnode" "$@"
+  namespace_query=$(echo $args | awk -F '|' '{ print $1 }')
+  pod_query=$(echo $args | awk -F '|' '{ print $2 }')
+  context_selector=$(echo $args | awk -F '|' '{ print $5 }')
+  
+  result=$(_kube_fzf_search "$namespace_query" "$pod_query" "$context_selector" "$rs") 
+  IFS=$'|' read -r namespace rs_name <<< "$result"
+
+  _kube_fzf_echo "kubectl describe $rs $rs_name --namespace='$namespace' --context '$context_selector'"
+  kubectl describe $rs $rs_name --namespace=$namespace --context $context_selector
+}
+
+descnode "$@"
