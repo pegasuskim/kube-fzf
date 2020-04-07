@@ -46,17 +46,29 @@ pfpod [ -c | -o | -a | -n <namespace-query>] [pod-query] <source-port:destinatio
 -c                    -  Copy to Clipboard
 EOF
       ;;
-    describepod)
+    desc)
       cat << EOF
-descpod [-a | -n <namespace-query>] [pod-query]
+desc [resource name] [-a | -n <namespace-query>] [pod-query]
 
 -a                    -  Search in all namespaces
 -h                    -  Show help
+-c                    -  Kubectl Context
 -n <namespace-query>  -  Find namespaces matching <namespace-query> and do fzf.
                          If there is only one match then it is selected automatically.
 EOF
       ;;
-    editvs)
+    restart)
+      cat << EOF
+restart [resource name] [-a | -n <namespace-query>] [pod-query]
+
+-a                    -  Search in all namespaces
+-h                    -  Show help
+-c                    -  Kubectl Context
+-n <namespace-query>  -  Find namespaces matching <namespace-query> and do fzf.
+                         If there is only one match then it is selected automatically.
+EOF
+      ;;
+    edit)
       cat << EOF
 edit [resource name] [-a | -n <namespace-query>] [pod-query]
 
@@ -166,8 +178,8 @@ _kube_fzf_search() {
           | fzf $(echo $pod_fzf_args) --preview "kubectl get $resource {1} -o yaml -n $namespace --context $context_selector  | bat -l yaml --color 'always' --style 'numbers'" \
         | awk '{ print $1 }')
   elif [ "$namespace_query" = "--all-namespaces" ]; then
-    read namespace pod_name <<< $(kubectl get $resource --all-namespaces --context $context_selector --no-headers \
-        | fzf $(echo $pod_fzf_args) --preview "kubectl get $resource {1} -o yaml -n --all-namespaces --context $context_selector | bat -l yaml --color 'always' --style 'numbers'" \
+    read namespace rs_name <<< $(kubectl get $resource --all-namespaces --context $context_selector --no-headers \
+        | fzf $(echo $pod_fzf_args) --preview "kubectl get $resource {2} -o yaml -n {1}  --context $context_selector | bat -l yaml --color 'always' --style 'numbers'" \
       | awk '{ print $1, $2 }')
   else
     local namespace_fzf_args=$(_kube_fzf_fzf_args "$namespace_query" "--select-1")
