@@ -156,18 +156,17 @@ _kube_fzf_search() {
   local resource=$4
   local pod_fzf_args=$(_kube_fzf_fzf_args "$pod_query")
 
-
   if [ -z "$namespace_query" ]; then
       namespace=$(kubectl config get-context --no-headers $context_selector \
         | awk '{ print $5 }')
 
       namespace=${namespace:=default}
       rs_name=$(kubectl get $resource --namespace=$namespace --context $context_selector --no-headers \
-          | fzf $(echo $pod_fzf_args) \
+          | fzf $(echo $pod_fzf_args) --preview "kubectl get $resource {1} -o yaml -n $namespace --context $context_selector  | bat -l yaml --color 'always' --style 'numbers'" \
         | awk '{ print $1 }')
   elif [ "$namespace_query" = "--all-namespaces" ]; then
     read namespace pod_name <<< $(kubectl get $resource --all-namespaces --context $context_selector --no-headers \
-        | fzf $(echo $pod_fzf_args) \
+        | fzf $(echo $pod_fzf_args) --preview "kubectl get $resource {1} -o yaml -n --all-namespaces --context $context_selector | bat -l yaml --color 'always' --style 'numbers'" \
       | awk '{ print $1, $2 }')
   else
     local namespace_fzf_args=$(_kube_fzf_fzf_args "$namespace_query" "--select-1")
@@ -177,7 +176,7 @@ _kube_fzf_search() {
 
     namespace=${namespace:=default}
     rs_name=$(kubectl get $resource --namespace=$namespace --context $context_selector --no-headers \
-        | fzf $(echo $pod_fzf_args) \
+        | fzf $(echo $pod_fzf_args) --preview "kubectl get $resource {1} -o yaml -n $namespace --context $context_selector | bat -l yaml --color 'always' --style 'numbers' " \
       | awk '{ print $1 }')
   fi
 
