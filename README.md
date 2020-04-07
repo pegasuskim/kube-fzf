@@ -1,7 +1,7 @@
 # kube-fzf
 thecasualcoder/kube-fzf 포크해서 개인적으로 자주 쓰는 패턴의 스크립트를 추가 하였습니다.
 
-여기에 사용하는 kubectl, teleport 등과 같이 어떠한 리소스를 찾고 그 찾은 결과를 활용해서 다음 명령어 사용되는 모든 패턴에 응용 할 수 있습니다.
+여기에 사용하는 kubectl, teleport 등과 같이 어떠한 리소스를 찾고 그 찾은 결과를 활용해서 다음 명령어에  사용되는 모든 패턴에 응용 할 수 있습니다.
 
 Shell commands using [`kubectl`](https://kubernetes.io/docs/reference/kubectl/overview/) and [`fzf`](https://github.com/junegunn/fzf) for command-line fuzzy searching of [Kubernetes](https://kubernetes.io/) [Pods](https://kubernetes.io/docs/concepts/workloads/pods/pod/). It helps to interactively:
 
@@ -44,48 +44,30 @@ tssh
 ### `editvs`
 Istio VirtualService를 수정합니다.
 ```
-editvs [-a | -n <namespace-query> -c <context>] [pod-query]
+editvs [-a | -n <namespace-query> -c <context>] [query]
 ```
 
-### `editdeploy`
-Deployment를 수정합니다.
+### `edit <resource name>`
+아래 예는 Deployment 리소스를 수정하는 예입니다.
 ```
-editdeploy [-a | -n <namespace-query> -c <context>] [pod-query]
-```
-
-### `editdr`
-Istio Destinationrule를 수정합니다.
-```
-editdr [-a | -n <namespace-query> -c <context>] [pod-query]
+edit deploy [-a | -n <namespace-query> -c <context>] [query]
 ```
 
-### `editcj`
-CronJob을 수정합니다.
+### `desc <resource name>`
+아래 예는 Pod 리소스의 describe를 보는 예입니다.
 ```
-editcj [-a | -n <namespace-query> -c <context>] [pod-query]
-```
-
-### `editsvc`
-Service를 수정합니다.
-```
-editcj [-a | -n <namespace-query> -c <context>] [pod-query]
+desc pod [-a | -n <namespace-query> -c <context>] [pod-query]
 ```
 
-### `descenode`
-K8S Node의 describe를 봅니다.
+### `restart <resource name>`
+아래 예는 Deployment 리소스의 rollout restart를 하는 예입니다.
 ```
-describepod [-a | -n <namespace-query> -c <context>] [pod-query]
+restart deploy [-a | -n <namespace-query> -c <context>] [pod-query]
 ```
 
 ### `findpod`
 ```
 findpod [-a | -n <namespace-query> -c <context>] [pod-query]
-```
-
-### `descepod`
-
-```
-describepod [-a | -n <namespace-query> -c <context>] [pod-query]
 ```
 
 ### `tailpod`
@@ -112,5 +94,6 @@ pfpod [-c | -o | -a | -n <namespace-query>] -c <context> [pod-query] <port>
 -a                    -  Search in all namespaces
 -n <namespace-query>  -  Find namespaces matching <namespace-query> and do fzf.
                          If there is only one match then it is selected automatically.
+-c                       Kubectl Context
 -h                    -  Show help
 ```
