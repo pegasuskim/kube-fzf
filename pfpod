@@ -6,19 +6,19 @@ set -o pipefail
 [[ -z "${KUBE_FZF_PATH}" ]] && source kube-fzf.sh || source $KUBE_FZF_PATH
 
 pfpod() {
-  local namespace_query pod_query port result namespace pod_name open copy
-
+  local namespace_query pod_query port result namespace pod_name open copy context
+  
   _kube_fzf_handler "pfpod" "$@"
-  IFS=$'|' read -r namespace_query pod_query port open copy <<< "$args"
+  context_selector=$(echo $args | awk -F '|' '{ print $5 }')
+  IFS=$'|' read -r namespace_query pod_query port open context_selector <<< "$args"
 
-  result=$(_kube_fzf_search_pod "$namespace_query" "$pod_query")
+  result=$(_kube_fzf_search "$namespace_query" "$pod_query" "$context_selector" "pod") 
   IFS=$'|' read -r namespace pod_name <<< "$result"
 
   local fzf_args=$(_kube_fzf_fzf_args "" "--select-1")
 
   _kube_fzf_echo "kubectl port-forward --namespace='$namespace' $pod_name $port"
   IFS=':' read -ra splitted_port <<< $port
-  $copy && copy_to_clipboard $splitted_port
   $open && open_in_browser $splitted_port
   kubectl port-forward --namespace=$namespace $pod_name $port
 }
@@ -27,14 +27,4 @@ open_in_browser() {
   (sleep 3 && echo "Opening localhost:$1" && open "http://localhost:$1") &
 }
 
-copy_to_clipboard() {
-  copier=$noop
-  command -v xclip >/dev/null 2>&1 && {
-    copier=xclip
-  }
-  command -v pbcopy >/dev/null 2>&1 && {
-    copier=pbcopy
-  }
-  echo "http://localhost:$1" | $copier
-}
 pfpod "$@"

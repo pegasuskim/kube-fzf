@@ -6,21 +6,21 @@ set -o pipefail
 [[ -z "${KUBE_FZF_PATH}" ]] && source kube-fzf.sh || source $KUBE_FZF_PATH
 
 execpod() {
-  local namespace_query pod_query cmd result namespace pod_name
+  local namespace_query pod_query cmd result namespace pod_name context_selector
 
   _kube_fzf_handler "execpod" "$@"
-  IFS=$'|' read -r namespace_query pod_query cmd _unused _unused <<< "$args"
+  IFS=$'|' read -r namespace_query pod_query cmd _unused context_selector <<< "$args"
 
-  result=$(_kube_fzf_search_pod "$namespace_query" "$pod_query")
+  result=$(_kube_fzf_search "$namespace_query" "$pod_query" "$context_selector" "pod") 
   IFS=$'|' read -r namespace pod_name <<< "$result"
 
   local fzf_args=$(_kube_fzf_fzf_args "" "--select-1")
-  local container_name=$(kubectl get pod $pod_name --namespace=$namespace --output=jsonpath='{.spec.containers[*].name}' \
+  local container_name=$(kubectl get pod $pod_name --context $context_selector --namespace=$namespace --output=jsonpath='{.spec.containers[*].name}' \
     | tr ' ' '\n' \
     | fzf $(echo $fzf_args))
 
-  _kube_fzf_echo "kubectl exec --namespace='$namespace' $pod_name -c $container_name -it $cmd"
-  kubectl exec --namespace=$namespace $pod_name -c $container_name -it $cmd
+  _kube_fzf_echo "kubectl exec --namespace='$namespace' --context $context_selector $pod_name -c $container_name -it $cmd"
+  kubectl exec --namespace=$namespace --context $context_selector $pod_name -c $container_name -it $cmd
 }
 
 execpod "$@"

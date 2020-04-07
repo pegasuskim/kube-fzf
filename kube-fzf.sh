@@ -148,42 +148,6 @@ _kube_fzf_fzf_args() {
   echo "$fzf_args"
 }
 
-_kube_fzf_search_pod() {
-  local namespace pod_name
-  local namespace_query=$1
-  local pod_query=$2
-  local pod_fzf_args=$(_kube_fzf_fzf_args "$pod_query")
-
-  if [ -z "$namespace_query" ]; then
-      context=$(kubectl config current-context)
-      namespace=$(kubectl config get-contexts --no-headers $context \
-        | awk '{ print $5 }')
-
-      namespace=${namespace:=default}
-      pod_name=$(kubectl get pod --namespace=$namespace --no-headers \
-          | fzf $(echo $pod_fzf_args) \
-        | awk '{ print $1 }')
-  elif [ "$namespace_query" = "--all-namespaces" ]; then
-    read namespace pod_name <<< $(kubectl get pod --all-namespaces --no-headers \
-        | fzf $(echo $pod_fzf_args) \
-      | awk '{ print $1, $2 }')
-  else
-    local namespace_fzf_args=$(_kube_fzf_fzf_args "$namespace_query" "--select-1")
-    namespace=$(kubectl get namespaces --no-headers \
-        | fzf $(echo $namespace_fzf_args) \
-      | awk '{ print $1 }')
-
-    namespace=${namespace:=default}
-    pod_name=$(kubectl get pod --namespace=$namespace --no-headers \
-        | fzf $(echo $pod_fzf_args) \
-      | awk '{ print $1 }')
-  fi
-
-  [ -z "$pod_name" ] && return 1
-
-  echo "$namespace|$pod_name"
-}
-
 _kube_fzf_search() {
   local namespace rs_name
   local namespace_query=$1

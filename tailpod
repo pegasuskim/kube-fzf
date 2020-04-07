@@ -6,13 +6,14 @@ set -o pipefail
 [[ -z "${KUBE_FZF_PATH}" ]] && source kube-fzf.sh || source $KUBE_FZF_PATH
 
 tailpod() {
-  local namespace_query pod_query result namespace pod_name
+  local namespace_query pod_query result namespace pod_name context_selector
 
   _kube_fzf_handler "tailpod" "$@"
   namespace_query=$(echo $args | awk -F '|' '{ print $1 }')
   pod_query=$(echo $args | awk -F '|' '{ print $2 }')
+  context_selector=$(echo $args | awk -F '|' '{ print $5 }')
 
-  result=$(_kube_fzf_search_pod "$namespace_query" "$pod_query")
+  result=$(_kube_fzf_search "$namespace_query" "$pod_query" "$context_selector" "$rs") 
   IFS=$'|' read -r namespace pod_name <<< "$result"
 
   local fzf_args=$(_kube_fzf_fzf_args "" "--select-1")
@@ -20,8 +21,8 @@ tailpod() {
     | tr ' ' '\n' \
     | fzf $(echo $fzf_args))
 
-  _kube_fzf_echo "kubectl logs --namespace='$namespace' --follow $pod_name -c $container_name"
-  kubectl logs --namespace=$namespace --follow $pod_name -c $container_name
+  _kube_fzf_echo "kubectl logs --namespace='$namespace' --context $context_selector --follow $pod_name -c $container_name"
+  kubectl logs --namespace=$namespace --context $context_selector --follow $pod_name -c $container_name
 }
 
 tailpod "$@"
