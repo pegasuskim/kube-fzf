@@ -11,4 +11,4 @@ ln -sf $(pwd)/editcj /usr/local/bin/editcj
 ln -sf $(pwd)/editdeploy /usr/local/bin/editdeploy
 ln -sf $(pwd)/editdr /usr/local/bin/editdr
 ln -sf $(pwd)/tssh /usr/local/bin/tssh
-ln -sf $(pwd)/kube-fzf/kube-fzf.sh  /usr/local/bin/kube-fzf.sh
+ln -sf $(pwd)/kube-fzf.sh  /usr/local/bin/kube-fzf.sh
