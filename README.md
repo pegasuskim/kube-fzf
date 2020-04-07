@@ -10,6 +10,7 @@ Shell commands using [`kubectl`](https://kubernetes.io/docs/reference/kubectl/ov
 * exec in to a container of a Pod
 * describe a pod
 * port forward pod
+* rollout restart deployment
 * edit service
 * edit cronjobs
 * edit istio virtualservices
@@ -19,6 +20,7 @@ Shell commands using [`kubectl`](https://kubernetes.io/docs/reference/kubectl/ov
 ## Prerequisite
 
 * [`fzf`](https://github.com/junegunn/fzf)
+* [`bat`](https://github.com/sharkdp/bat) supports syntax highlighting for a large number of programming and markup languages
 * [`xclip`](https://linux.die.net/man/1/xclip) Only for Linux and it is optional
 * [`teleport`](https://gravitational.com/teleport/?utm_medium=ppc&utm_source=adwords&utm_campaign=Brands) Only for Teleport User and it is optional
 

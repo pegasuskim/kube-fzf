@@ -4,10 +4,14 @@ set -e
 set -o pipefail
 
 [[ -z "${KUBE_FZF_PATH}" ]] && source kube-fzf.sh || source $KUBE_FZF_PATH
-editvs() {
+desc() {
   local namespace_query pod_query result namespace rs_name context
-  local rs="vs"
-  _kube_fzf_handler "editcr" "$@"
+  local rs=$1
+  if [ -z "$rs" ]; then
+      echo 'you must pass resource name'
+      exit
+  fi
+  _kube_fzf_handler "desc" "$2"  "$3" "$4" "$5" "$6"
   namespace_query=$(echo $args | awk -F '|' '{ print $1 }')
   pod_query=$(echo $args | awk -F '|' '{ print $2 }')
   context_selector=$(echo $args | awk -F '|' '{ print $5 }')
@@ -15,8 +19,8 @@ editvs() {
   result=$(_kube_fzf_search "$namespace_query" "$pod_query" "$context_selector" "$rs") 
   IFS=$'|' read -r namespace rs_name <<< "$result"
 
-  _kube_fzf_echo "kubectl edit $rs $rs_name --namespace='$namespace' --context '$context_selector'"
-  kubectl edit $rs $rs_name --namespace=$namespace --context $context_selector
+  _kube_fzf_echo "kubectl describe $rs $rs_name --namespace='$namespace' --context '$context_selector'"
+  kubectl describe $rs $rs_name --namespace=$namespace --context $context_selector
 }
 
-editvs "$@"
+desc "$@"

@@ -48,7 +48,7 @@ EOF
       ;;
     describepod)
       cat << EOF
-describepod [-a | -n <namespace-query>] [pod-query]
+descpod [-a | -n <namespace-query>] [pod-query]
 
 -a                    -  Search in all namespaces
 -h                    -  Show help
@@ -58,10 +58,11 @@ EOF
       ;;
     editvs)
       cat << EOF
-editvs [-a | -n <namespace-query>] [pod-query]
+edit [resource name] [-a | -n <namespace-query>] [pod-query]
 
 -a                    -  Search in all namespaces
 -h                    -  Show help
+-c                    -  Kubectl Context
 -n <namespace-query>  -  Find namespaces matching <namespace-query> and do fzf.
                          If there is only one match then it is selected automatically.
 EOF
