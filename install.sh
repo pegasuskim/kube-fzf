@@ -6,4 +6,5 @@ ln -sf $(pwd)/descnode /usr/local/bin/descnode
 ln -sf $(pwd)/pfpod /usr/local/bin/pfpod
 ln -sf $(pwd)/editvs /usr/local/bin/editvs
 ln -sf $(pwd)/editdr /usr/local/bin/editdr
+ln -sf $(pwd)/tssh /usr/local/bin/tssh
 ln -sf $(pwd)/kube-fzf/kube-fzf.sh  /usr/local/bin/kube-fzf.sh
