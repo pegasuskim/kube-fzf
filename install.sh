@@ -1,4 +1,4 @@
-ln -sf $(pwd)/findpod /usr/local/bin/findpod
+ln -sf $(pwd)/kget /usr/local/bin/kget
 ln -sf $(pwd)/execpod /usr/local/bin/execpod
 ln -sf $(pwd)/tailpod /usr/local/bin/tailpod
 ln -sf $(pwd)/kdesc /usr/local/bin/kdesc

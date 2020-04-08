@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+set -e
+set -o pipefail
+
+[[ -z "${KUBE_FZF_PATH}" ]] && source kube-fzf.sh || source $KUBE_FZF_PATH
+
+getrs() {
+  local namespace_query pod_query result namespace rs_name
+  local rs=$1
+  if [[ $rs == *"-"* ]]; then
+      _kube_fzf_usage "kget"
+      return 1
+  elif [ -z "$rs" ]; then
+      _kube_fzf_usage "kget"
+      return 1
+  fi
+  _kube_fzf_handler "kget" "$2" "$3" "$4" "$5" "$6"
+  namespace_query=$(echo $args | awk -F '|' '{ print $1 }')
+  pod_query=$(echo $args | awk -F '|' '{ print $2 }')
+  context_selector=$(echo $args | awk -F '|' '{ print $5 }')
+
+  result=$(_kube_fzf_search "$namespace_query" "$pod_query" "$context_selector" "$rs")
+  IFS=$'|' read -r namespace rs_name <<< "$result"
+
+  _kube_fzf_echo "kubectl get $rs --namespace='$namespace' $rs_name --context $context_selector -o yaml" 
+  kubectl get $rs --namespace=$namespace $rs_name --context $context_selector -o yaml
+}
+
+getrs "$@"
