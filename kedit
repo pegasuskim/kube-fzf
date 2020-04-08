@@ -7,12 +7,12 @@ set -o pipefail
 edit() {
   local namespace_query pod_query result namespace rs_name
   local rs=$1
+  
   if [[ $rs == *"-"* ]]; then
       _kube_fzf_usage "kedit"
       return 1
   elif [ -z "$rs" ]; then
-      _kube_fzf_usage "kedit"
-      return 1
+      rs=$(kube_fzf_api_resources)
   fi
   _kube_fzf_handler "edit" "$2"  "$3" "$4" "$5" "$6"
   namespace_query=$(echo $args | awk -F '|' '{ print $1 }')
