@@ -12,8 +12,7 @@ getrs() {
       _kube_fzf_usage "kget"
       return 1
   elif [ -z "$rs" ]; then
-      _kube_fzf_usage "kget"
-      return 1
+      rs=$(kube_fzf_api_resources)
   fi
   _kube_fzf_handler "kget" "$2" "$3" "$4" "$5" "$6"
   namespace_query=$(echo $args | awk -F '|' '{ print $1 }')

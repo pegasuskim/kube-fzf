@@ -82,6 +82,14 @@ EOF
   esac
 }
 
+kube_fzf_api_resources() {
+
+	read resource <<< $(kubectl api-resources --no-headers | awk '{print $1}' | sort -u \
+		| fzf $(echo $pod_fzf_args) \
+		| awk '{ print $1 }')
+   echo "$resource"
+}
+
 _kube_fzf_handler() {
   local opt namespace_query pod_query cmd context
   local open=false
@@ -183,8 +191,6 @@ _kube_fzf_search() {
   local bat_command=""
   if command -v bat > /dev/null; then
     bat_command="| bat -l yaml --color 'always' --style 'numbers'"
-  
-  
   fi
   if [ -z "$namespace_query" ]; then
       namespace=$(kubectl config get-context --no-headers $context_selector \
