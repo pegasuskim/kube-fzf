@@ -30,11 +30,6 @@ cd ~/.kube-fzf
 ```
 
 ## Usage
-### `tssh`
-Teleport tsh ls를 통해서 서버를 검색후 선택하면 서버에 바로 들어갑니다.
-```
-tssh
-```
 
 ### `kstern <resource name>`
 아래 예는 Deployment 리소스를 찾아서 stern 명령어를 실행하는 예
