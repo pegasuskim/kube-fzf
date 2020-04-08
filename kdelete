@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+set -e
+set -o pipefail
+
+[[ -z "${KUBE_FZF_PATH}" ]] && source kube-fzf.sh || source $KUBE_FZF_PATH
+delete_rs() {
+  local namespace_query pod_query result namespace rs_name
+  local rs=$1
+  if [[ $rs == *"-"* ]] || [ -z "$rs" ]; then
+      rs=$(kube_fzf_api_resources)
+      if [ -z "$rs" ]; then
+        exit
+      fi
+      _kube_fzf_handler "kdelete" "$@"
+  else
+      _kube_fzf_handler "kdelete" "$2" "$3" "$4" "$5" "$6"
+  fi
+  namespace_query=$(echo $args | awk -F '|' '{ print $1 }')
+  pod_query=$(echo $args | awk -F '|' '{ print $2 }')
+  context_selector=$(echo $args | awk -F '|' '{ print $5 }')
+  
+  result=$(_kube_fzf_search "$namespace_query" "$pod_query" "$context_selector" "$rs") 
+  IFS=$'|' read -r namespace rs_name <<< "$result"
+
+  _kube_fzf_echo "kubectl delete $rs $rs_name --namespace='$namespace' --context '$context_selector'"
+  read -p "kubectl delete $rs $rs_name --namespace='$namespace' --context '$context_selector' Are you Sure? " -n 1 -r
+  echo 
+  if [[ $REPLY =~ ^[Yy]$ ]]
+  then
+    kubectl delete $rs $rs_name --namespace=$namespace --context $context_selector
+  fi
+}
+
+delete_rs "$@"

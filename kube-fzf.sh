@@ -4,6 +4,18 @@ _kube_fzf_usage() {
   local func=$1
   echo -e "\nUSAGE:\n"
   case $func in
+    kdelete)
+      cat << EOF
+kdelete [resource name] [-a | -n <namespace-query>] [pod-query]
+ex) kdelete pod
+
+-a                    -  Search in all namespaces
+-h                    -  Show help
+-c                    - Find kubectl context and do fzf
+-n <namespace-query>  -  Find namespaces matching <namespace-query> and do fzf.
+                         If there is only one match then it is selected automatically.
+EOF
+      ;;
     kstern)
       cat << EOF
 kstern [resource name] [-a | -n <namespace-query>] [pod-query]

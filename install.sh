@@ -6,4 +6,5 @@ ln -sf $(pwd)/krestart /usr/local/bin/krestart
 ln -sf $(pwd)/kstern /usr/local/bin/kstern
 ln -sf $(pwd)/pfpod /usr/local/bin/pfpod
 ln -sf $(pwd)/kedit /usr/local/bin/kedit
+ln -sf $(pwd)/kdelete /usr/local/bin/kdelete
 ln -sf $(pwd)/kube-fzf.sh  /usr/local/bin/kube-fzf.sh
