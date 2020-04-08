@@ -20,7 +20,13 @@ rollout() {
   IFS=$'|' read -r namespace rs_name <<< "$result"
 
   _kube_fzf_echo "kubectl rollout restart $rs $rs_name --namespace='$namespace' --context '$context_selector'"
-  kubectl rollout restart $rs $rs_name --namespace=$namespace --context $context_selector
+  read -p "kubectl rollout restart $rs $rs_name --namespace='$namespace' --context '$context_selector' Are you Sure? " -n 1 -r
+  echo 
+  if [[ $REPLY =~ ^[Yy]$ ]]
+  then
+    kubectl rollout restart $rs $rs_name --namespace=$namespace --context $context_selector
+      # do dangerous stuff
+  fi
 }
 
 rollout "$@"
