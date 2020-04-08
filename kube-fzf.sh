@@ -87,7 +87,10 @@ kube_fzf_api_resources() {
 	read resource <<< $(kubectl api-resources --no-headers | awk '{print $1}' | sort -u \
 		| fzf $(echo $pod_fzf_args) \
 		| awk '{ print $1 }')
-   echo "$resource"
+      if [ -z "$resource" ]; then
+        exit 
+      fi
+    echo "$resource"
 }
 
 _kube_fzf_handler() {
@@ -205,7 +208,7 @@ _kube_fzf_search() {
         | fzf $(echo $pod_fzf_args) --preview "kubectl get $resource {2} -o yaml -n {1}  --context $context_selector $bat_command" \
       | awk '{ print $1, $2 }')
   else
-    local namespace_fzf_args=$(_kube_fzf_fzf_args "$namespace_query" "--select-1")
+    local namespace_fzf_args=$(_kube_fzf_fzf_args "'$namespace_query" "--select-1")
     namespace=$(kubectl get namespaces --context $context_selector --no-headers  \
         | fzf $(echo $namespace_fzf_args) \
       | awk '{ print $1 }')
