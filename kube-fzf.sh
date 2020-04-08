@@ -4,6 +4,18 @@ _kube_fzf_usage() {
   local func=$1
   echo -e "\nUSAGE:\n"
   case $func in
+    kstern)
+      cat << EOF
+kstern [resource name] [-a | -n <namespace-query>] [pod-query]
+ex) kstern pod
+
+-a                    -  Search in all namespaces
+-h                    -  Show help
+-c                    - Find kubectl context and do fzf
+-n <namespace-query>  -  Find namespaces matching <namespace-query> and do fzf.
+                         If there is only one match then it is selected automatically.
+EOF
+      ;;
     kget)
       cat << EOF
 kget [resource name] [-a | -n <namespace-query>] [pod-query]
@@ -11,6 +23,7 @@ ex) kget pod
 
 -a                    -  Search in all namespaces
 -h                    -  Show help
+-c                    - Find kubectl context and do fzf
 -n <namespace-query>  -  Find namespaces matching <namespace-query> and do fzf.
                          If there is only one match then it is selected automatically.
 EOF
@@ -21,6 +34,7 @@ tailpod [-a | -n <namespace-query>] [pod-query]
 
 -a                    -  Search in all namespaces
 -h                    -  Show help
+-c                    -  Find kubectl context and do fzf
 -n <namespace-query>  -  Find namespaces matching <namespace-query> and do fzf.
                          If there is only one match then it is selected automatically.
 EOF
@@ -31,6 +45,7 @@ execpod [-a | -n <namespace-query>] [pod-query] <command>
 
 -a                    -  Search in all namespaces
 -h                    -  Show help
+-c                    -  Find kubectl context and do fzf
 -n <namespace-query>  -  Find namespaces matching <namespace-query> and do fzf.
                          If there is only one match then it is selected automatically.
 EOF
@@ -41,6 +56,7 @@ pfpod [ -c | -o | -a | -n <namespace-query>] [pod-query] <source-port:destinatio
 
 -a                    -  Search in all namespaces
 -h                    -  Show help
+-c                    -  Find kubectl context and do fzf
 -n <namespace-query>  -  Find namespaces matching <namespace-query> and do fzf.
                          If there is only one match then it is selected automatically.
 -o                    -  Open in Browser after port-forwarding
@@ -53,6 +69,7 @@ ex) kdesc service
 
 -a                    -  Search in all namespaces
 -h                    -  Show help
+-c                    -  Find kubectl context and do fzf
 -n <namespace-query>  -  Find namespaces matching <namespace-query> and do fzf.
                          If there is only one match then it is selected automatically.
 EOF
@@ -63,6 +80,7 @@ krestart [resource name] [-a | -n <namespace-query> | -c <kubectl context>] [pod
 ex) krestart deployment
 -a                    -  Search in all namespaces
 -h                    -  Show help
+-c                    -  Find kubectl context and do fzf
 -n <namespace-query>  -  Find namespaces matching <namespace-query> and do fzf.
                          If there is only one match then it is selected automatically.
 EOF
@@ -74,7 +92,7 @@ ex) kedit deployment
 
 -a                    -  Search in all namespaces
 -h                    -  Show help
--c                    -  Select kubectl context
+-c                    -  Find kubectl context and do fzf
 -n <namespace-query>  -  Find namespaces matching <namespace-query> and do fzf.
                          If there is only one match then it is selected automatically.
 EOF

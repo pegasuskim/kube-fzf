@@ -16,6 +16,7 @@ Shell commands using [`kubectl`](https://kubernetes.io/docs/reference/kubectl/ov
 
 * [`fzf`](https://github.com/junegunn/fzf)
 * [`bat`](https://github.com/sharkdp/bat) supports syntax highlighting for a large number of programming and markup languages
+* [`stern`](https://github.com/wercker/stern) Stern allows you to tail multiple pods on Kubernetes and multiple containers within the pod. Each result is color coded for quicker debugging
 * [`xclip`](https://linux.die.net/man/1/xclip) Only for Linux and it is optional
 
 ## Install
@@ -35,45 +36,51 @@ Teleport tsh ls를 통해서 서버를 검색후 선택하면 서버에 바로 �
 tssh
 ```
 
+### `kstern <resource name>`
+아래 예는 Deployment 리소스를 찾아서 stern 명령어를 실행하는 예
+```
+kstern deploy [-a | -n <namespace-query> | -c ] [query]
+```
+
 ### `kedit <resource name>`
 아래 예는 Deployment 리소스를 수정하는 예입니다.
 ```
-kedit deploy [-a | -n <namespace-query> -c <context>] [query]
+kedit deploy [-a | -n <namespace-query> | -c ] [query]
 ```
 
 ### `kdesc <resource name>`
 아래 예는 Pod 리소스의 describe를 보는 예입니다.
 ```
-kdesc pod [-a | -n <namespace-query> -c <context>] [pod-query]
+kdesc pod [-a | -n <namespace-query> | -c ] [pod-query]
 ```
 
 ### `krestart <resource name>`
 아래 예는 Deployment 리소스의 rollout restart를 하는 예입니다.
 ```
-krestart deploy [-a | -n <namespace-query> -c <context>] [pod-query]
+krestart deploy [-a | -n <namespace-query> | -c ] [pod-query]
 ```
 
 ### `findpod`
 ```
-findpod [-a | -n <namespace-query> -c <context>] [pod-query]
+findpod [-a | -n <namespace-query> | -c ] [pod-query]
 ```
 
 ### `tailpod`
 
 ```
-tailpod [-a | -n <namespace-query> -c <context>] [pod-query]
+tailpod [-a | -n <namespace-query> | -c ] [pod-query]
 ```
 
 ### `execpod`
 
 ```
-execpod [-a | -n <namespace-query>] -c <context> [pod-query] <command>
+execpod [-a | -n <namespace-query> | -c]  [pod-query] <command>
 ```
 
 ### `pfpod`
 
 ```
-pfpod [-a | -n <namespace-query>] -c <context> [pod-query] <port>
+pfpod [-a | -n <namespace-query> | -c]  [pod-query] <port>
 ```
 
 #### Options
@@ -82,6 +89,6 @@ pfpod [-a | -n <namespace-query>] -c <context> [pod-query] <port>
 -a                    -  Search in all namespaces
 -n <namespace-query>  -  Find namespaces matching <namespace-query> and do fzf.
                          If there is only one match then it is selected automatically.
--c                       Kubectl Context
+-c                       Find kubectl context and do fzf
 -h                    -  Show help
 ```

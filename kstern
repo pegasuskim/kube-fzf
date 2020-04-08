@@ -12,9 +12,9 @@ sternexec() {
       if [ -z "$rs" ]; then
         exit
       fi
-      _kube_fzf_handler "kdesc" "$@"
+      _kube_fzf_handler "kstern" "$@"
   else
-      _kube_fzf_handler "kdesc" "$2" "$3" "$4" "$5" "$6"
+      _kube_fzf_handler "kstern" "$2" "$3" "$4" "$5" "$6"
   fi
   namespace_query=$(echo $args | awk -F '|' '{ print $1 }')
   pod_query=$(echo $args | awk -F '|' '{ print $2 }')
