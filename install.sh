@@ -5,5 +5,4 @@ ln -sf $(pwd)/kdesc /usr/local/bin/kdesc
 ln -sf $(pwd)/krestart /usr/local/bin/krestart
 ln -sf $(pwd)/pfpod /usr/local/bin/pfpod
 ln -sf $(pwd)/kedit /usr/local/bin/kedit
-ln -sf $(pwd)/tssh /usr/local/bin/tssh
 ln -sf $(pwd)/kube-fzf.sh  /usr/local/bin/kube-fzf.sh

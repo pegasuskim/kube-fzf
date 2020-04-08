@@ -46,9 +46,10 @@ pfpod [ -c | -o | -a | -n <namespace-query>] [pod-query] <source-port:destinatio
 -c                    -  Copy to Clipboard
 EOF
       ;;
-    desc)
+    kdesc)
       cat << EOF
-desc [resource name] [-a | -n <namespace-query>] [pod-query]
+kdesc [resource name] [-a | -n <namespace-query> | -c <kubectl context>] [pod-query]
+ex) kdesc service
 
 -a                    -  Search in all namespaces
 -h                    -  Show help
@@ -57,10 +58,10 @@ desc [resource name] [-a | -n <namespace-query>] [pod-query]
                          If there is only one match then it is selected automatically.
 EOF
       ;;
-    restart)
+    krestart)
       cat << EOF
-restart [resource name] [-a | -n <namespace-query>] [pod-query]
-
+krestart [resource name] [-a | -n <namespace-query> | -c <kubectl context>] [pod-query]
+ex) krestart deployment
 -a                    -  Search in all namespaces
 -h                    -  Show help
 -c                    -  Kubectl Context
@@ -68,9 +69,10 @@ restart [resource name] [-a | -n <namespace-query>] [pod-query]
                          If there is only one match then it is selected automatically.
 EOF
       ;;
-    edit)
+    kedit)
       cat << EOF
-edit [resource name] [-a | -n <namespace-query>] [pod-query]
+kedit [resource name] [-a | -n <namespace-query> | -c <kubectl context>] [pod-query]
+ex) kedit deployment
 
 -a                    -  Search in all namespaces
 -h                    -  Show help

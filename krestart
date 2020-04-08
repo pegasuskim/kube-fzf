@@ -5,11 +5,14 @@ set -o pipefail
 
 [[ -z "${KUBE_FZF_PATH}" ]] && source kube-fzf.sh || source $KUBE_FZF_PATH
 rollout() {
-  local namespace_query pod_query result namespace rs_name context
+  local namespace_query pod_query result namespace rs_name
   local rs=$1
-  if [ -z "$rs" ]; then
-      echo 'you must pass resource name'
-      exit
+  if [[ $rs == *"-"* ]]; then
+      _kube_fzf_usage "krestart"
+      return 1
+  elif [ -z "$rs" ]; then
+      _kube_fzf_usage "krestart"
+      return 1
   fi
   _kube_fzf_handler "restart" "$2"  "$3" "$4" "$5" "$6"
   namespace_query=$(echo $args | awk -F '|' '{ print $1 }')
@@ -25,7 +28,6 @@ rollout() {
   if [[ $REPLY =~ ^[Yy]$ ]]
   then
     kubectl rollout restart $rs $rs_name --namespace=$namespace --context $context_selector
-      # do dangerous stuff
   fi
 }
 

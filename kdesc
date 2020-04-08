@@ -7,11 +7,14 @@ set -o pipefail
 desc() {
   local namespace_query pod_query result namespace rs_name context
   local rs=$1
-  if [ -z "$rs" ]; then
-      echo 'you must pass resource name'
-      exit
+  if [[ $rs == *"-"* ]]; then
+      _kube_fzf_usage "kedit"
+      return 1
+  elif [ -z "$rs" ]; then
+      _kube_fzf_usage "kedit"
+      return 1
   fi
-  _kube_fzf_handler "desc" "$2"  "$3" "$4" "$5" "$6"
+  _kube_fzf_handler "kdesc" "$2" "$3" "$4" "$5" "$6"
   namespace_query=$(echo $args | awk -F '|' '{ print $1 }')
   pod_query=$(echo $args | awk -F '|' '{ print $2 }')
   context_selector=$(echo $args | awk -F '|' '{ print $5 }')
