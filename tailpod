@@ -12,15 +12,13 @@ tailpod() {
   namespace_query=$(echo $args | awk -F '|' '{ print $1 }')
   pod_query=$(echo $args | awk -F '|' '{ print $2 }')
   context_selector=$(echo $args | awk -F '|' '{ print $5 }')
-
-  result=$(_kube_fzf_search "$namespace_query" "$pod_query" "$context_selector" "$rs") 
+  result=$(_kube_fzf_search "$namespace_query" "$pod_query" "$context_selector" "pod") 
   IFS=$'|' read -r namespace pod_name <<< "$result"
 
   local fzf_args=$(_kube_fzf_fzf_args "" "--select-1")
   local container_name=$(kubectl get pod $pod_name --namespace=$namespace --output=jsonpath='{.spec.containers[*].name}' \
     | tr ' ' '\n' \
     | fzf $(echo $fzf_args))
-
   _kube_fzf_echo "kubectl logs --namespace='$namespace' --context $context_selector --follow $pod_name -c $container_name"
   kubectl logs --namespace=$namespace --context $context_selector --follow $pod_name -c $container_name
 }
