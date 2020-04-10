@@ -34,7 +34,7 @@ cd ~/.kube-fzf
 ### `kdelete <resource name>`
 아래 예는 Pod 리소스를 삭제하는 예입니다.
 ```
-kstern pod [-a | -n <namespace-query> | -c ] [query]
+kdelete pod [-a | -n <namespace-query> | -c ] [query]
 ```
 
 ### `kstern <resource name>`
