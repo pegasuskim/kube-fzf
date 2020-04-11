@@ -115,7 +115,7 @@ EOF
 kube_fzf_api_resources() {
 
 	read resource <<< $(kubectl api-resources --no-headers | awk '{print $1}' | sort -u \
-		| fzf $(echo $pod_fzf_args) --prompt "Find api-resource > " --no-info \
+		| fzf $(echo $pod_fzf_args) --header "choose api-resource " --no-info \
 		| awk '{ print $1 }')
       if [ -z "$resource" ]; then
         exit 
@@ -164,7 +164,7 @@ _kube_fzf_handler() {
   done
   if [ "$context" = true ] ; then
       read ctx <<< $(kubectl config get-contexts -o=name --no-headers | awk '{print $1}' \
-          | fzf $(echo $pod_fzf_args) --prompt "find context > "\
+          | fzf $(echo $pod_fzf_args) --header "choose kubectl context "\
           | awk '{ print $1 }')
       context=$(echo "$ctx")
       if [ -z "$context" ]; then 
