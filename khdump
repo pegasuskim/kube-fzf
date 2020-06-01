@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+set -e
+set -o pipefail
+
+[[ -z "${KUBE_FZF_PATH}" ]] && source kube-fzf.sh || source $KUBE_FZF_PATH
+
+getrs() {
+  local namespace_query pod_query result namespace rs_name pid path
+  local rs=$1
+  
+  if [[ $rs == *"-"* ]] || [ -z "$rs" ]; then
+      rs='pods'
+      if [ -z "$rs" ]; then
+        exit
+      fi
+      _kube_fzf_handler "kdesc" "$@"
+  else
+      _kube_fzf_handler "kdesc" "$2" "$3" "$4" "$5" "$6"
+  fi
+
+  namespace_query=$(echo $args | awk -F '|' '{ print $1 }')
+  pod_query=$(echo $args | awk -F '|' '{ print $2 }')
+  context_selector=$(echo $args | awk -F '|' '{ print $5 }')
+
+  pid=$(echo $args | awk -F '|' '{ print $6 }')
+  path=$(echo $args | awk -F '|' '{ print $7 }')
+  if [ -z "$pid" ]; then
+    pid=1
+  fi
+  if [ -z "$path" ]; then
+    path="/dumps"
+  fi
+
+  result=$(_kube_fzf_search "$namespace_query" "$pod_query" "$context_selector" "$rs")
+  IFS=$'|' read -r namespace rs_name <<< "$result"
+  
+  
+  local opath=$(date +%s)'_'$rs_name'.hdump'
+  _kube_fzf_echo "kubectl exec --namespace='$namespace' $rs_name --context $context_selector -- jcmd $pid GC.heap_dump $path/$opath" 
+  
+  kubectl exec --namespace=$namespace $rs_name --context $context_selector -- sh -c "jcmd $pid GC.heap_dump $path/$opath"
+  _kube_fzf_echo "Heap dump Complete > $path/$opath"
+  _kube_fzf_echo "Heap dump Download from Pod to Host"
+  kubectl cp --namespace=$namespace $rs_name:${path#/}/$opath --context $context_selector ./$opath
+  _kube_fzf_echo "Heap dump Download Complete"
+}
+
+getrs "$@"

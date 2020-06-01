@@ -84,6 +84,28 @@ execpod [-a | -n <namespace-query> | -c]  [pod-query] <command>
 pfpod [-a | -n <namespace-query> | -c]  [pod-query] <port>
 ```
 
+### `kout`
+> **WARNING**: 특정 팟을 서비스에서 제외하는 명령어 입니다. 
+
+이 명령어는 해당 팟의 env label 을 dump 로 바꾸어 서비스에서 routing 되지 않도록 변경합니다.
+```
+kout [-a | -n <namespace-query> | -c <kubectl context>] [pod-query]
+```
+
+### `khdump`
+> **WARNING**: 특정 팟의 Heapdump 를 생성합니다.
+
+```
+khdump [-a | -n <namespace-query> | -c <kubectl context> | -d <output path> | -p <pid>] [pod-query]
+```
+
+### `ktdump`
+> **WARNING**: 특정 팟의 ThreadDump 를 생성합니다.
+
+```
+ktdump [-a | -n <namespace-query> | -c <kubectl context> | -d <output path> | -p <pid>] [pod-query]
+```
+
 #### Options
 
 ```
