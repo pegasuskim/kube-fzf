@@ -15,9 +15,11 @@ Shell commands using [`kubectl`](https://kubernetes.io/docs/reference/kubectl/ov
 ## Prerequisite
 
 * [`fzf`](https://github.com/junegunn/fzf)
+* [`yq`](https://github.com/mikefarah/yq) yaml processor **required!**
 * [`bat`](https://github.com/sharkdp/bat) supports syntax highlighting for a large number of programming and markup languages
 * [`stern`](https://github.com/wercker/stern) Stern allows you to tail multiple pods on Kubernetes and multiple containers within the pod. Each result is color coded for quicker debugging
 * [`xclip`](https://linux.die.net/man/1/xclip) Only for Linux and it is optional
+
 
 ## Install
 
