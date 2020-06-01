@@ -28,13 +28,17 @@ getrs() {
   if [ -z "$pid" ]; then
     pid=1
   fi
-  if [ -z "$path" ]; then
-    path="/dumps"
-  fi
 
   result=$(_kube_fzf_search "$namespace_query" "$pod_query" "$context_selector" "$rs")
   IFS=$'|' read -r namespace rs_name <<< "$result"
   
+  if [ -z "$pid" ]; then
+    pid=$(kubectl exec --namespace=$namespace $rs_name --context $context_selector -- sh -c "top -n 1 | grep java" | fzf | awk '{print $1}')
+    if [ -z "$pid" ]; then
+        exit
+    fi
+  fi
+
   
   local opath=$(date +%s)'_'$rs_name'.hdump'
   _kube_fzf_echo "kubectl exec --namespace='$namespace' $rs_name --context $context_selector -- jcmd $pid GC.heap_dump $path/$opath" 
