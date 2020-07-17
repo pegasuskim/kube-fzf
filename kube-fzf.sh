@@ -109,6 +109,52 @@ ex) kedit deployment
                          If there is only one match then it is selected automatically.
 EOF
       ;;
+    kout)
+      cat << EOF
+kout [-a | -n <namespace-query> | -c <kubectl context>] [pod-query]
+ex) kout pod1
+
+-a                    -  Search in all namespaces
+-h                    -  Show help
+-c                    -  Find kubectl context and do fzf
+-n <namespace-query>  -  Find namespaces matching <namespace-query> and do fzf.
+                         If there is only one match then it is selected automatically.
+EOF
+      ;;  
+    ktdump)
+      cat << EOF
+ktdump [-a | -n <namespace-query> | -c <kubectl context> | -d <output path> | -p <pid>] [pod-query]
+ex) ktdump pod1
+
+-a                    -  Search in all namespaces
+-h                    -  Show help
+-c                    -  Find kubectl context and do fzf
+-d <path>             -  Default: /dumps
+                         Output path of thread dump files 
+                         it will save to $<path>/$now_$podname.tdump
+-p <pid>              -  Default: 1
+                         Target Process id for thread dump.
+-n <namespace-query>  -  Find namespaces matching <namespace-query> and do fzf.
+                         If there is only one match then it is selected automatically.
+EOF
+      ;;
+    khdump)
+      cat << EOF
+khdump [-a | -n <namespace-query> | -c <kubectl context> | -d <output path> | -p <pid>] [pod-query]
+ex) khdump pod1
+
+-a                    -  Search in all namespaces
+-h                    -  Show help
+-c                    -  Find kubectl context and do fzf
+-d <path>             -  Default: /dumps
+                         Output path of heap dump files 
+                         it will save to $<path>/$now_$podname.hdump
+-p <pid>              -  Default: 1
+                         Target Process id for heap dump.
+-n <namespace-query>  -  Find namespaces matching <namespace-query> and do fzf.
+                         If there is only one match then it is selected automatically.
+EOF
+      ;;    
   esac
 }
 
@@ -124,7 +170,7 @@ kube_fzf_api_resources() {
 }
 
 _kube_fzf_handler() {
-  local opt namespace_query pod_query cmd context
+  local opt namespace_query pod_query cmd context path pid
   local open=false
   local context=false
   local OPTIND=1
@@ -132,7 +178,7 @@ _kube_fzf_handler() {
 
   shift $((OPTIND))
 
-  while getopts "n:caoh" opt; do
+  while getopts "n:p:d:caoh" opt; do
     case $opt in
       h)
         _kube_fzf_usage "$func"
@@ -141,6 +187,12 @@ _kube_fzf_handler() {
       n)
         namespace_query="$OPTARG"
         ;;
+      p)
+        pid="$OPTARG"
+        ;;
+      d)
+        path="$OPTARG"
+        ;;    
       a)
         namespace_query="--all-namespaces"
         ;;
@@ -202,7 +254,7 @@ _kube_fzf_handler() {
     pod_query=$1
   fi
 
-  args="$namespace_query|$pod_query|$cmd|$open|$context"
+  args="$namespace_query|$pod_query|$cmd|$open|$context|$pid|$path"
 }
 
 _kube_fzf_fzf_args() {

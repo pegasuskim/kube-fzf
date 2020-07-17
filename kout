@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+set -e
+set -o pipefail
+
+[[ -z "${KUBE_FZF_PATH}" ]] && source kube-fzf.sh || source $KUBE_FZF_PATH
+
+getrs() {
+  local namespace_query pod_query result namespace rs_name
+  local rs=$1
+  
+  if [[ $rs == *"-"* ]] || [ -z "$rs" ]; then
+      rs='pods'
+      if [ -z "$rs" ]; then
+        exit
+      fi
+      _kube_fzf_handler "kdesc" "$@"
+  else
+      _kube_fzf_handler "kdesc" "$2" "$3" "$4" "$5" "$6"
+  fi
+
+  namespace_query=$(echo $args | awk -F '|' '{ print $1 }')
+  pod_query=$(echo $args | awk -F '|' '{ print $2 }')
+  context_selector=$(echo $args | awk -F '|' '{ print $5 }')
+
+  result=$(_kube_fzf_search "$namespace_query" "$pod_query" "$context_selector" "$rs")
+  IFS=$'|' read -r namespace rs_name <<< "$result"
+  
+  local pod_uuid=$(cat /dev/urandom | env LC_CTYPE=C tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+  
+  _kube_fzf_echo "kubectl get $rs --namespace='$namespace' $rs_name --context $context_selector -o yaml > /tmp/$pod_uuid" 
+  
+  kubectl get $rs --namespace=$namespace $rs_name --context $context_selector -o yaml > /tmp/$pod_uuid
+  yq w /tmp/$pod_uuid metadata.labels.env 'dump' > /tmp/$pod_uuid'_w'
+  kubectl apply --namespace=$namespace -f /tmp/$pod_uuid'_w'
+  rm -rf /tmp/$pod_uuid /tmp/$pod_uuid'_w'
+}
+
+getrs "$@"
