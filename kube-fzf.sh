@@ -178,7 +178,7 @@ _kube_fzf_handler() {
   if [ "$func" = "execpod" ] || [ "$func" = "pfpod" ]; then
     if [ $# -eq 1 ]; then
       cmd=$1
-      [ -z "$cmd" ] && cmd="sh"
+      [ -z "$cmd" ] && cmd="bash"
     elif [ $# -eq 2 ]; then
       pod_query=$1
       cmd=$2
