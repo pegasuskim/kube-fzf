@@ -10,7 +10,7 @@ pfpod() {
   
   _kube_fzf_handler "pfpod" "$@"
   context_selector=$(echo $args | awk -F '|' '{ print $5 }')
-  IFS=$'|' read -r namespace_query pod_query port open context_selector <<< "$args"
+  IFS=$'|' read -r namespace_query pod_query port open context_selector _unused _unused <<< "$args"
 
   result=$(_kube_fzf_search "$namespace_query" "$pod_query" "$context_selector" "pod") 
   IFS=$'|' read -r namespace pod_name <<< "$result"
