@@ -1,5 +1,6 @@
 # kube-fzf
 thecasualcoder/kube-fzf 포크해서 개인적으로 자주 쓰는 패턴의 스크립트를 추가 하였습니다.
+https://github.com/thecasualcoder/kube-fzf
 
 
 Shell commands using [`kubectl`](https://kubernetes.io/docs/reference/kubectl/overview/) and [`fzf`](https://github.com/junegunn/fzf) for command-line fuzzy searching of [Kubernetes](https://kubernetes.io/) [Pods](https://kubernetes.io/docs/concepts/workloads/pods/pod/). It helps to interactively:
